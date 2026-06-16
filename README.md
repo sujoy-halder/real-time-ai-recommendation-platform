@@ -69,56 +69,78 @@ This project showcases practical skills in:
 ---
 
 🏗️ System Architecture
-flowchart TD
-    A[User Interface / Mobile App] --> B[FastAPI API Gateway]
+flowchart TB
 
-    B --> C[User Service]
-    B --> D[Content Service]
-    B --> E[Search Service]
-    B --> F[Analytics Service]
+    UI["📱 User Interface / Mobile App"]
 
-    C --> G[Kafka Event Producer]
-    D --> G
-    E --> G
-    F --> G
+    subgraph L1["Application Layer"]
+        API["⚡ FastAPI API<br/>(8000)"]
+        AN["📊 Analytics Service"]
+        SS["🔍 Search Service"]
+    end
 
-    G --> H[Kafka Topics]
+    subgraph L2["Event Ingestion"]
+        EP["📥 Event Producer<br/>(watch, like, rate)"]
+        KT["🛰️ Kafka Topics<br/>• watch-events<br/>• like-events<br/>• rating-events<br/>• search-events"]
+    end
 
-    H --> H1[watch-events]
-    H --> H2[like-events]
-    H --> H3[rating-events]
-    H --> H4[search-events]
+    subgraph L3["Real-Time Processing"]
+        SP["🔥 Spark Streaming Engine<br/>• Real-time Processing<br/>• Windowed Aggregations<br/>• Popular Content Detection"]
+    end
 
-    H --> I[Spark Streaming Engine]
+    subgraph L4["Orchestration & ML"]
+        AF["🕒 Airflow Orchestrator<br/>• Daily Model Retraining<br/>• Data Quality Checks<br/>• Recommendations Generation"]
+        ML["🤖 ML Training<br/>• Collaborative Filtering<br/>• Content-Based<br/>• Neural Networks"]
+    end
 
-    I --> J[Real-Time Aggregations]
-    I --> K[Trending Content Detection]
-    I --> L[User Behavior Processing]
+    subgraph L5["Storage & Cache"]
+        PG["🗄️ PostgreSQL DB<br/>• users<br/>• content<br/>• interactions<br/>• recommendations<br/>• embeddings"]
+        RD["⚡ Redis Cache<br/>• Session Cache<br/>• Recommendations<br/>• Real-time Stats"]
+    end
 
-    J --> M[PostgreSQL Database]
-    K --> M
-    L --> M
+    subgraph L6["Search & Monitoring"]
+        ES["🔎 Elasticsearch<br/>(Full-text Search)"]
+        MON["📈 Monitoring Stack<br/>• Prometheus<br/>• Grafana<br/>• ELK Stack"]
+    end
 
-    M --> N[Airflow Orchestrator]
-    N --> O[ML Training Pipeline]
+    UI --> API
+    UI --> AN
+    UI --> SS
 
-    O --> P[Collaborative Filtering]
-    O --> Q[Content-Based Filtering]
-    O --> R[Neural Recommendation Model]
+    API --> EP
+    AN --> EP
+    SS --> EP
 
-    P --> S[Hybrid Recommendation Engine]
-    Q --> S
-    R --> S
+    EP --> KT
+    KT --> SP
 
-    S --> T[Redis Cache]
-    T --> B
+    SP --> AF
+    SP --> ML
 
-    M --> U[Elasticsearch]
-    B --> V[Prometheus]
-    V --> W[Grafana Dashboard]
+    AF --> PG
+    ML --> PG
+    AF --> RD
+    ML --> RD
 
-    B --> X[ELK Logging Stack]
+    PG --> ES
+    PG --> MON
+    RD --> MON
 
+    classDef frontend fill:#E3F2FD,stroke:#1E88E5,color:#0D47A1,stroke-width:2px;
+    classDef app fill:#E8F5E9,stroke:#43A047,color:#1B5E20,stroke-width:2px;
+    classDef event fill:#FFF3E0,stroke:#FB8C00,color:#E65100,stroke-width:2px;
+    classDef processing fill:#F3E5F5,stroke:#8E24AA,color:#4A148C,stroke-width:2px;
+    classDef ml fill:#FCE4EC,stroke:#D81B60,color:#880E4F,stroke-width:2px;
+    classDef storage fill:#E0F7FA,stroke:#00ACC1,color:#006064,stroke-width:2px;
+    classDef monitor fill:#F1F8E9,stroke:#7CB342,color:#33691E,stroke-width:2px;
+
+    class UI frontend;
+    class API,AN,SS app;
+    class EP,KT event;
+    class SP processing;
+    class AF,ML ml;
+    class PG,RD,ES storage;
+    class MON monitor;
 ## 🔄 Real-Time Data Flow
 
 ```mermaid
