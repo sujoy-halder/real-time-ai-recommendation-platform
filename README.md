@@ -1,322 +1,534 @@
-# Real-Time AI Recommendation System (Netflix/YouTube Style)
+# 🎬 Real-Time AI Recommendation Platform
 
-A production-grade, scalable recommendation engine with real-time processing, machine learning models, and cloud-native deployment.
+### Netflix / YouTube Style AI-Powered Recommendation System
 
-## 🏗️ Architecture
+<p align="center">
+  <b>Production-grade real-time recommendation platform using Data Engineering, Machine Learning, Cloud, DevOps, and MLOps.</b>
+</p>
 
+<p align="center">
+  <a href="https://github.com/sujoy-halder/real-time-ai-recommendation-platform">
+    <img src="https://img.shields.io/badge/Project-Real--Time%20AI%20Recommendation-ff4757?style=for-the-badge" />
+  </a>
+  <img src="https://img.shields.io/badge/Status-Production--Ready-2ed573?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/Apache%20Kafka-Streaming-231F20?style=for-the-badge&logo=apachekafka&logoColor=white" />
+  <img src="https://img.shields.io/badge/Apache%20Spark-Processing-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white" />
+  <img src="https://img.shields.io/badge/Apache%20Airflow-Orchestration-017CEE?style=for-the-badge&logo=apacheairflow&logoColor=white" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Redis-Cache-DC382D?style=for-the-badge&logo=redis&logoColor=white" />
+  <img src="https://img.shields.io/badge/Elasticsearch-Search-005571?style=for-the-badge&logo=elasticsearch&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Kubernetes-Orchestration-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/AWS-Cloud-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" />
+  <img src="https://img.shields.io/badge/Terraform-IaC-844FBA?style=for-the-badge&logo=terraform&logoColor=white" />
+  <img src="https://img.shields.io/badge/GitHub%20Actions-CI/CD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" />
+  <img src="https://img.shields.io/badge/Prometheus-Monitoring-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" />
+  <img src="https://img.shields.io/badge/Grafana-Dashboard-F46800?style=for-the-badge&logo=grafana&logoColor=white" />
+</p>
+
+---
+
+## 📌 Project Summary
+
+**Real-Time AI Recommendation Platform** is a production-grade, cloud-native recommendation system inspired by platforms like **Netflix**, **YouTube**, and **Amazon Prime Video**.
+
+The system captures real-time user interactions such as **watch**, **like**, **rating**, and **search events**, processes them using a streaming data pipeline, trains machine learning models, and serves personalized recommendations through scalable APIs.
+
+---
+
+## 🎯 What This Project Demonstrates
+
+This project showcases practical skills in:
+
+| Area                         | Skills Demonstrated                                                      |
+| ---------------------------- | ------------------------------------------------------------------------ |
+| 🧠 Machine Learning          | Collaborative filtering, content-based filtering, neural recommendations |
+| ⚡ Real-Time Data Engineering | Kafka streaming, Spark Streaming, windowed aggregations                  |
+| 🏗️ Backend Engineering      | FastAPI microservices and REST APIs                                      |
+| 🗄️ Database Design          | PostgreSQL schema, indexing, partitioning, materialized views            |
+| 🚀 Caching                   | Redis recommendation cache and real-time stats                           |
+| 🔁 Workflow Orchestration    | Airflow DAGs for model retraining and data quality checks                |
+| ☁️ Cloud Engineering         | AWS EKS, RDS, ElastiCache, MSK, S3                                       |
+| 🧱 Infrastructure as Code    | Terraform-based cloud provisioning                                       |
+| 🐳 DevOps                    | Docker, Kubernetes, GitHub Actions                                       |
+| 📊 Observability             | Prometheus, Grafana, ELK Stack                                           |
+| 🔐 Security                  | JWT, rate limiting, encryption, secrets management                       |
+
+---
+
+🏗️ System Architecture
+
+The platform follows a real-time, event-driven, cloud-native architecture designed for scalable personalized recommendations.
+
+┌──────────────────────────────────────────────────────────────────────┐
+│                          CLIENT LAYER                                │
+│                                                                      │
+│                  Web App / Mobile App / Frontend                     │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                           API LAYER                                  │
+│                                                                      │
+│        FastAPI Gateway  │  User Service  │  Content Service          │
+│        Search Service   │  Analytics Service                         │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                      EVENT STREAMING LAYER                           │
+│                                                                      │
+│                 Apache Kafka Event Producer                          │
+│                                                                      │
+│        watch-events  │  like-events  │  rating-events  │ search-events│
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                    REAL-TIME PROCESSING LAYER                        │
+│                                                                      │
+│                         Apache Spark Streaming                       │
+│                                                                      │
+│        Real-Time Processing  │  Windowed Aggregations                │
+│        Trending Detection    │  User Behavior Analytics              │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                    DATA STORAGE & CACHE LAYER                        │
+│                                                                      │
+│     PostgreSQL Database                          Redis Cache          │
+│                                                                      │
+│     users                  recommendations       session cache        │
+│     content                embeddings            recommendation cache │
+│     interactions           analytics             real-time stats      │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                      MACHINE LEARNING LAYER                          │
+│                                                                      │
+│                         Airflow Orchestrator                         │
+│                                                                      │
+│       Daily Model Training  │  Data Quality Checks                   │
+│       Collaborative Filtering  │  Content-Based Filtering            │
+│       Neural Recommendation Model  │  Hybrid Recommendation Engine   │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                │
+                                ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                    SEARCH & OBSERVABILITY LAYER                      │
+│                                                                      │
+│        Elasticsearch  │  Prometheus  │  Grafana  │  ELK Stack         │
+│                                                                      │
+│        Full-text Search  │ Metrics  │ Dashboards  │ Centralized Logs  │
+└──────────────────────────────────────────────────────────────────────┘
+
+## 🔄 Real-Time Data Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API as FastAPI API
+    participant Kafka as Kafka Broker
+    participant Spark as Spark Streaming
+    participant DB as PostgreSQL
+    participant Airflow
+    participant ML as ML Engine
+    participant Redis
+    participant Client
+
+    User->>API: Watch / Like / Rate / Search
+    API->>Kafka: Publish interaction event
+    Kafka->>Spark: Stream event data
+    Spark->>DB: Store processed analytics
+    Airflow->>DB: Fetch training data
+    Airflow->>ML: Trigger model training
+    ML->>DB: Store recommendations
+    ML->>Redis: Cache top recommendations
+    Client->>API: Request recommendations
+    API->>Redis: Fetch cached recommendations
+    Redis-->>API: Return personalized results
+    API-->>Client: Show recommendations
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    User Interface / Mobile App              │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-        ▼                  ▼                  ▼
-   ┌─────────────┐ ┌──────────────┐ ┌──────────────┐
-   │ FastAPI API │ │  Analytics   │ │ Search Svc   │
-   │  (8000)     │ │  Service     │ │              │
-   └──────┬──────┘ └──────────────┘ └──────────────┘
-          │
-          ├─────────────────────────────────┐
-          │                                 │
-          ▼                                 ▼
-   ┌─────────────────────────┐  ┌──────────────────────┐
-   │   Event Producer        │  │  Kafka Topics        │
-   │  (watch, like, rate)    │  │  ├─ watch-events    │
-   │                         │  │  ├─ like-events     │
-   │ Kafka Producer (9092)   │  │  ├─ rating-events   │
-   └─────────────────────────┘  │  └─ search-events   │
-                                └──────────────────────┘
-                                        │
-                                        ▼
-                        ┌───────────────────────────────┐
-                        │  Spark Streaming Engine       │
-                        │  - Real-time Processing      │
-                        │  - Windowed Aggregations     │
-                        │  - Popular Content Detection │
-                        └───────────────────────────────┘
-                                        │
-                    ┌───────────────────┴───────────────────┐
-                    │                                       │
-                    ▼                                       ▼
-        ┌──────────────────────────┐        ┌──────────────────────┐
-        │ Airflow Orchestrator     │        │  ML Training         │
-        │ ├─ Daily model retraining│        │  ├─ Collaborative    │
-        │ ├─ Data quality checks   │        │  │   Filtering       │
-        │ └─ Recommendations gen   │        │  ├─ Content-based    │
-        │                          │        │  └─ Neural Networks  │
-        └──────────────────────────┘        └──────────────────────┘
-                    │                                │
-                    └────────────────┬───────────────┘
-                                     │
-                ┌────────────────────┴────────────────────┐
-                │                                         │
-                ▼                                         ▼
-        ┌──────────────────────┐              ┌──────────────────────┐
-        │  PostgreSQL DB       │              │  Redis Cache         │
-        │  ├─ users            │              │  ├─ Session cache    │
-        │  ├─ content          │              │  ├─ Recommendations  │
-        │  ├─ interactions     │              │  └─ Real-time stats  │
-        │  ├─ recommendations  │              │                      │
-        │  └─ embeddings       │              │                      │
-        └──────────────────────┘              └──────────────────────┘
-                    │
-                    ├────────────────────────────────────┐
-                    │                                    │
-                    ▼                                    ▼
-        ┌──────────────────────┐              ┌──────────────────────┐
-        │  Elasticsearch       │              │  Monitoring Stack    │
-        │  (Full-text Search)  │              │  ├─ Prometheus       │
-        │                      │              │  ├─ Grafana          │
-        │                      │              │  └─ ELK Stack        │
-        └──────────────────────┘              └──────────────────────┘
-```
 
-## 🚀 Tech Stack
+---
 
-### Core
-- **Python 3.11** - Main programming language
-- **FastAPI** - REST API framework
-- **PostgreSQL 15** - Primary database
-- **Redis 7** - Caching layer
+## ✨ Key Features
+
+### ⚡ Real-Time Event Streaming
+
+* Captures user behavior events in real time
+* Handles watch, like, rating, and search events
+* Uses Kafka topics for scalable event ingestion
+
+### 🔥 Stream Processing
+
+* Spark Streaming for real-time event processing
+* Windowed aggregations for trending content
+* Real-time popularity and engagement calculation
+
+### 🤖 Hybrid AI Recommendation Engine
+
+* Collaborative filtering
+* Content-based filtering
+* Neural network embeddings
+* Configurable hybrid scoring
+* Real-time recommendation ranking
+
+### 🚀 API Serving Layer
+
+* FastAPI-based microservices
+* Personalized recommendation endpoint
+* Content search endpoint
+* User analytics endpoint
+* Trending content endpoint
+
+### 🧠 MLOps Workflow
+
+* Airflow-based scheduled model retraining
+* Daily recommendation generation
+* Model evaluation workflow
+* ML experiment tracking support
+
+### 📊 Monitoring & Observability
+
+* Prometheus metrics
+* Grafana dashboards
+* ELK centralized logging
+* Kafka lag monitoring
+* API latency tracking
+
+### 🔐 Production Security
+
+* JWT authentication
+* Rate limiting
+* Data encryption at rest and in transit
+* PostgreSQL Row-Level Security
+* AWS Secrets Manager integration
+
+---
+
+## 🧰 Tech Stack
+
+### Core Backend
+
+| Technology    | Purpose                     |
+| ------------- | --------------------------- |
+| Python 3.11   | Main programming language   |
+| FastAPI       | REST API and microservices  |
+| PostgreSQL 15 | Primary relational database |
+| Redis 7       | Low-latency caching         |
 
 ### Streaming & Processing
-- **Apache Kafka** - Event streaming
-- **Apache Spark** - Real-time processing
-- **Apache Airflow** - Workflow orchestration
+
+| Technology     | Purpose                     |
+| -------------- | --------------------------- |
+| Apache Kafka   | Event streaming platform    |
+| Apache Spark   | Real-time stream processing |
+| Apache Airflow | Workflow orchestration      |
 
 ### Machine Learning
-- **TensorFlow/PyTorch** - Deep learning models
-- **Scikit-learn** - ML algorithms
-- **Pandas/NumPy** - Data processing
 
-### Search
-- **Elasticsearch** - Full-text search
+| Technology           | Purpose                                  |
+| -------------------- | ---------------------------------------- |
+| Scikit-learn         | Classical ML models                      |
+| TensorFlow / PyTorch | Deep learning recommendation models      |
+| Pandas / NumPy       | Data processing and feature engineering  |
+| MLflow               | Model tracking and experiment management |
 
-### Cloud & DevOps
-- **Docker** - Containerization
-- **Kubernetes** - Orchestration
-- **AWS** (EKS, RDS, ElastiCache, MSK, S3)
-- **Terraform** - Infrastructure as Code
-- **GitHub Actions** - CI/CD
+### Search & Analytics
+
+| Technology           | Purpose                                |
+| -------------------- | -------------------------------------- |
+| Elasticsearch        | Full-text search                       |
+| PostgreSQL Analytics | Windowed analytics and reporting       |
+| Redis Stats Cache    | Real-time counters and recommendations |
+
+### DevOps & Cloud
+
+| Technology      | Purpose                 |
+| --------------- | ----------------------- |
+| Docker          | Containerization        |
+| Kubernetes      | Container orchestration |
+| AWS EKS         | Kubernetes deployment   |
+| AWS RDS         | Managed PostgreSQL      |
+| AWS ElastiCache | Managed Redis           |
+| AWS MSK         | Managed Kafka           |
+| AWS S3          | Object storage          |
+| Terraform       | Infrastructure as Code  |
+| GitHub Actions  | CI/CD automation        |
 
 ### Monitoring
-- **Prometheus** - Metrics collection
-- **Grafana** - Visualization
-- **ELK Stack** - Logging
+
+| Technology | Purpose                 |
+| ---------- | ----------------------- |
+| Prometheus | Metrics collection      |
+| Grafana    | Dashboard visualization |
+| ELK Stack  | Centralized logging     |
+
+---
 
 ## 📦 Project Structure
 
-```
-.
-├── fastapi-services/           # FastAPI microservices
-│   ├── main.py                # Main API
+```text
+real-time-ai-recommendation-platform/
+│
+├── fastapi-services/
+│   ├── main.py
 │   ├── Dockerfile
 │   └── requirements.txt
-├── recommendation-engine/      # ML models
-│   ├── recommender.py         # Hybrid recommender
-│   └── models.py              # Model implementations
-├── kafka-producer/            # Event producer
+│
+├── recommendation-engine/
+│   ├── recommender.py
+│   └── models.py
+│
+├── kafka-producer/
 │   └── producer.py
-├── spark-streaming/           # Real-time processing
+│
+├── spark-streaming/
 │   ├── processor.py
 │   ├── Dockerfile
 │   └── requirements.txt
-├── airflow/                   # Orchestration
+│
+├── airflow/
 │   ├── dags/
 │   │   └── recommendation_dags.py
 │   └── Dockerfile
-├── database/                  # Database schema
+│
+├── database/
 │   └── schema.sql
-├── kubernetes/                # K8s manifests
-│   └── deployment.yaml
-├── terraform/                 # Infrastructure as Code
+│
+├── kubernetes/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   └── hpa.yaml
+│
+├── terraform/
 │   ├── main.tf
 │   ├── variables.tf
 │   └── outputs.tf
-├── .github/workflows/         # CI/CD
-│   └── deploy.yml
-├── monitoring/                # Monitoring configs
+│
+├── monitoring/
 │   ├── prometheus.yml
 │   └── logstash.conf
-└── docker-compose-production.yml
+│
+├── .github/
+│   └── workflows/
+│       └── deploy.yml
+│
+├── docker-compose-production.yml
+└── README.md
 ```
 
-## 🔧 Installation
-
-### Local Development
-
-```bash
-# Clone repository
-git clone https://github.com/yourusername/recommendation-system.git
-cd recommendation-system
-
-# Create .env
-cp .env.example .env
-
-# Start services
-docker-compose -f docker-compose-production.yml up -d
-
-# Initialize database
-docker exec postgres-recommendation psql -U admin -d recommendations_db -f /docker-entrypoint-initdb.d/schema.sql
-
-# Verify services
-curl http://localhost:8000/health
-curl http://localhost:3000  # Grafana
-curl http://localhost:8888  # Airflow
-```
-
-### Cloud Deployment
-
-```bash
-# Setup Terraform
-cd terraform
-terraform init
-terraform plan
-terraform apply -var-file="production.tfvars"
-
-# Deploy to Kubernetes
-kubectl apply -f ../kubernetes/deployment.yaml
-
-# Deploy with Helm
-helm repo add recommendation https://your-helm-repo.com
-helm install recommendation-system recommendation/recommendation-system
-```
+---
 
 ## 📊 API Endpoints
 
 ### User Service
-```bash
-POST   /api/v1/users                      # Create user
-GET    /api/v1/users/{user_id}            # Get user profile
-GET    /api/v1/users/{user_id}/watch-history  # Watch history
-```
+
+| Method | Endpoint                                | Description            |
+| ------ | --------------------------------------- | ---------------------- |
+| POST   | `/api/v1/users`                         | Create a new user      |
+| GET    | `/api/v1/users/{user_id}`               | Get user profile       |
+| GET    | `/api/v1/users/{user_id}/watch-history` | Get user watch history |
 
 ### Content Service
-```bash
-GET    /api/v1/content                    # List content
-GET    /api/v1/content/{content_id}       # Get content details
-GET    /api/v1/search?q=query             # Search content
-```
+
+| Method | Endpoint                       | Description            |
+| ------ | ------------------------------ | ---------------------- |
+| GET    | `/api/v1/content`              | List available content |
+| GET    | `/api/v1/content/{content_id}` | Get content details    |
+| GET    | `/api/v1/search?q=query`       | Search content         |
 
 ### Recommendation Service
-```bash
-GET    /api/v1/recommendations/{user_id}  # Get personalized recommendations
-POST   /api/v1/interactions               # Record user interaction
-GET    /api/v1/trending                   # Get trending content
-GET    /api/v1/analytics/user/{user_id}   # User analytics
-```
+
+| Method | Endpoint                            | Description                      |
+| ------ | ----------------------------------- | -------------------------------- |
+| GET    | `/api/v1/recommendations/{user_id}` | Get personalized recommendations |
+| POST   | `/api/v1/interactions`              | Record user interaction          |
+| GET    | `/api/v1/trending`                  | Get trending content             |
+| GET    | `/api/v1/analytics/user/{user_id}`  | Get user analytics               |
+
+---
 
 ## 🤖 Machine Learning Models
 
-### 1. Collaborative Filtering (Matrix Factorization)
-- User-based: Find similar users
-- Item-based: Find similar items
-- Matrix factorization with SGD
+### 1. Collaborative Filtering
+
+Collaborative filtering recommends content based on user-item interaction patterns.
+
+* User-based similarity
+* Item-based similarity
+* Matrix factorization
+* Rating prediction
 
 ### 2. Content-Based Filtering
-- TF-IDF vectorization
-- Cosine similarity
-- Genre, duration, ratings
 
-### 3. Deep Learning
-- Neural network embeddings
-- Dense layers with dropout
-- Multi-task learning
+Content-based filtering recommends similar content using metadata and feature similarity.
 
-### 4. Hybrid Approach
-- Combines all three models
-- Configurable weights
-- Real-time scoring
+* TF-IDF vectorization
+* Cosine similarity
+* Genre-based matching
+* Rating and duration features
 
-## 🔄 Data Flow
+### 3. Neural Recommendation Model
 
-1. **User Interaction** → Kafka Topic
-2. **Event Collection** → Kafka Brokers
-3. **Real-time Processing** → Spark Streaming
-4. **Windowed Analytics** → PostgreSQL
-5. **Batch Training** → Airflow DAG (daily 2 AM)
-6. **Recommendation Generation** → Stored in DB
-7. **API Serving** → Redis Cache + FastAPI
-8. **Monitoring** → Prometheus + Grafana
+Deep learning model for learning user and content embeddings.
+
+* User embeddings
+* Content embeddings
+* Dense neural layers
+* Dropout regularization
+* Multi-task learning
+
+### 4. Hybrid Recommendation Engine
+
+Final recommendation score is generated by combining multiple recommendation strategies.
+
+```text
+Final Score =
+    Collaborative Filtering Score * Weight A
+  + Content-Based Score * Weight B
+  + Neural Model Score * Weight C
+  + Trending Score * Weight D
+```
+
+---
+
+## ⚙️ Local Development Setup
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/sujoy-halder/real-time-ai-recommendation-platform.git
+cd real-time-ai-recommendation-platform
+```
+
+### 2. Create Environment File
+
+```bash
+cp .env.example .env
+```
+
+### 3. Start Services
+
+```bash
+docker-compose -f docker-compose-production.yml up -d
+```
+
+### 4. Initialize Database
+
+```bash
+docker exec postgres-recommendation psql -U admin -d recommendations_db -f /docker-entrypoint-initdb.d/schema.sql
+```
+
+### 5. Verify Services
+
+```bash
+curl http://localhost:8000/health
+curl http://localhost:3000
+curl http://localhost:8888
+```
+
+---
+
+## ☁️ Cloud Deployment
+
+### Terraform Infrastructure Setup
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply -var-file="production.tfvars"
+```
+
+### Kubernetes Deployment
+
+```bash
+kubectl create namespace recommendation-system
+kubectl apply -f kubernetes/deployment.yaml
+kubectl apply -f kubernetes/hpa.yaml
+```
+
+---
 
 ## 📈 Monitoring & Observability
 
 ### Grafana Dashboards
-- Real-time event throughput
-- Model performance metrics
-- User engagement trends
-- System health status
+
+* Real-time event throughput
+* Recommendation API latency
+* ML model inference time
+* Kafka consumer lag
+* Spark streaming delay
+* Cache hit ratio
+* User engagement trends
+* System health status
 
 ### Prometheus Metrics
-```
+
+```text
 recommendation_api_requests_total
 recommendation_api_response_time_seconds
 ml_model_inference_time_seconds
 kafka_consumer_lag
 spark_streaming_processing_delay_seconds
+redis_cache_hit_ratio
+recommendation_ctr
 ```
 
-### Logs (ELK Stack)
-- API requests/responses
-- Model training logs
-- Spark processing logs
-- Error traces
+### ELK Stack Logs
+
+* API request logs
+* Kafka producer logs
+* Spark processing logs
+* Airflow DAG logs
+* Model training logs
+* Error traces
+
+---
 
 ## 🚀 Performance Optimization
 
-### Caching Strategy
-- Redis for user recommendations (TTL: 1 hour)
-- Trending content cache (TTL: 1 hour)
-- Search results cache (TTL: 30 minutes)
+| Area       | Optimization                                   |
+| ---------- | ---------------------------------------------- |
+| API        | Async FastAPI endpoints and connection pooling |
+| Cache      | Redis TTL-based recommendation caching         |
+| Database   | Indexes on user_id, content_id, and timestamp  |
+| Database   | Partitioned interaction table by date          |
+| Analytics  | Materialized views for reporting               |
+| Streaming  | Spark windowed aggregations                    |
+| Search     | Elasticsearch full-text indexing               |
+| Deployment | Kubernetes HPA autoscaling                     |
 
-### Database Optimization
-- Indexes on user_id, content_id, timestamp
-- Partitioned interactions table (by date)
-- Materialized views for analytics
+---
 
-### API Optimization
-- Response caching with ETag
-- Pagination (default 20, max 100)
-- Connection pooling (20 connections)
-- Async/await for I/O operations
+## 🔐 Security Features
 
-## 🔐 Security
+| Security Area     | Implementation                          |
+| ----------------- | --------------------------------------- |
+| Authentication    | JWT-based authentication                |
+| Rate Limiting     | 100 requests per minute per user        |
+| Data Protection   | Encryption at rest and in transit       |
+| Database Security | PostgreSQL Row-Level Security           |
+| Secrets           | AWS Secrets Manager                     |
+| API Protection    | Input validation and request throttling |
 
-- JWT authentication on API endpoints
-- Rate limiting (100 req/min per user)
-- Data encryption at rest and in transit
-- RLS (Row-Level Security) in PostgreSQL
-- Secrets management with AWS Secrets Manager
-
-## 📝 Example Usage
-
-### Record Watch Event
-```bash
-curl -X POST http://localhost:8000/api/v1/interactions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "user_id": 1,
-    "content_id": 42,
-    "interaction_type": "watch",
-    "rating": 4.5
-  }'
-```
-
-### Get Recommendations
-```bash
-curl http://localhost:8000/api/v1/recommendations/1?limit=10
-```
-
-### Search Content
-```bash
-curl "http://localhost:8000/api/v1/search?q=action&limit=20"
-```
-
-### Get Analytics
-```bash
-curl http://localhost:8000/api/v1/analytics/user/1
-```
+---
 
 ## 🧪 Testing
 
@@ -334,57 +546,94 @@ locust -f tests/load/locustfile.py --host=http://localhost:8000
 python tests/ml/evaluate_models.py
 ```
 
+---
+
 ## 📊 Metrics & KPIs
 
-- **Recommendation CTR**: Click-through rate
-- **Model RMSE**: Root mean squared error
-- **API p95 latency**: < 200ms
-- **Cache hit rate**: > 80%
-- **System uptime**: > 99.9%
-- **Data freshness**: < 1 hour
-
-## 🚢 Deployment
-
-### Docker Compose (Development)
-```bash
-docker-compose -f docker-compose-production.yml up
-```
-
-### Kubernetes (Production)
-```bash
-kubectl create namespace recommendation-system
-kubectl apply -f kubernetes/deployment.yaml
-kubectl apply -f kubernetes/hpa.yaml
-```
-
-### CI/CD Pipeline
-Push to main branch → GitHub Actions → Tests → Build → Deploy to EKS
-
-## 📚 Documentation
-
-- [API Documentation](./docs/api.md)
-- [ML Models Guide](./docs/ml-models.md)
-- [Deployment Guide](./docs/deployment.md)
-- [Architecture Deep Dive](./docs/architecture.md)
-
-## 🤝 Contributing
-
-1. Create feature branch
-2. Commit changes
-3. Push and create pull request
-4. Pass CI/CD checks
-5. Get review and merge
-
-## 📄 License
-
-MIT License - see LICENSE file
-
-## 📞 Support
-
-- Issues: GitHub Issues
-- Discussions: GitHub Discussions
-- Email: support@recommendation-system.io
+| Metric             | Target                 |
+| ------------------ | ---------------------- |
+| API p95 Latency    | < 200 ms               |
+| Cache Hit Rate     | > 80%                  |
+| System Uptime      | > 99.9%                |
+| Data Freshness     | < 1 hour               |
+| Kafka Consumer Lag | Low / Near real-time   |
+| Recommendation CTR | Continuously monitored |
+| Model RMSE         | Continuously optimized |
 
 ---
 
-**Built with ❤️ for Netflix-scale recommendations**
+## 🔁 CI/CD Pipeline
+
+```mermaid
+flowchart LR
+    A[Push to Main] --> B[GitHub Actions]
+    B --> C[Run Tests]
+    C --> D[Build Docker Images]
+    D --> E[Push Images]
+    E --> F[Deploy to AWS EKS]
+    F --> G[Monitor with Prometheus & Grafana]
+```
+
+---
+
+## 🧠 Skills Highlighted
+
+This project is designed to highlight job-ready skills for:
+
+* Data Engineering
+* Machine Learning Engineering
+* Backend Engineering
+* Cloud Engineering
+* DevOps Engineering
+* MLOps Engineering
+* Real-Time Analytics
+* System Design
+
+---
+
+## 📚 Documentation
+
+| Document                                         | Description                      |
+| ------------------------------------------------ | -------------------------------- |
+| [API Documentation](./docs/api.md)               | API endpoint details             |
+| [ML Models Guide](./docs/ml-models.md)           | Recommendation model explanation |
+| [Deployment Guide](./docs/deployment.md)         | Local and cloud deployment       |
+| [Architecture Deep Dive](./docs/architecture.md) | Complete system architecture     |
+
+---
+
+## 📌 Future Improvements
+
+* Add online learning for real-time model updates
+* Add A/B testing for recommendation strategies
+* Add feature store integration
+* Add model registry with MLflow
+* Add data validation with Great Expectations
+* Add blue-green deployment strategy
+* Add recommendation explanation API
+* Add user segmentation analytics
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+## 👨‍💻 Author
+
+**Sujoy Halder**
+
+* GitHub: [sujoy-halder](https://github.com/sujoy-halder)
+* Repository: [real-time-ai-recommendation-platform](https://github.com/sujoy-halder/real-time-ai-recommendation-platform)
+
+---
+
+<p align="center">
+  <b>⭐ If you found this project useful, give it a star!</b>
+</p>
+
+<p align="center">
+  <b>Built with ❤️ for Netflix-scale real-time AI recommendations</b>
+</p>
