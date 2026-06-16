@@ -69,7 +69,7 @@ This project showcases practical skills in:
 ---
 
 🏗️ System Architecture
-<img width="1200" height="366" alt="System Architecture" src="https://github.com/user-attachments/assets/0411fc3e-4762-42d4-b44e-a4cd6a54ba5b" />
+<img width="2200" height="3000" alt="System Architecture" src="https://github.com/user-attachments/assets/aa8a0c7c-fd38-4c1f-b3c8-bcf394e09251" />
 
 
 ## 🔄 Real-Time Data Flow
