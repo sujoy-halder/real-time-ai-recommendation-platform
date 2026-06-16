@@ -1,0 +1,170 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+  CLUSTER_NAME: recommendation-cluster
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov flake8 black isort
+          pip install -r requirements.txt
+
+      - name: Lint with flake8
+        run: |
+          flake8 recommendation-engine/ fastapi-services/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 recommendation-engine/ fastapi-services/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Format check with black
+        run: |
+          black --check recommendation-engine/ fastapi-services/
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --cov=recommendation-engine --cov=fastapi-services --cov-report=xml
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  build:
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - recommendation-api
+          - spark-streaming
+          - recommendation-engine
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
+
+      - name: Create ECR repository if it doesn't exist
+        run: |
+          aws ecr create-repository --repository-name ${{ matrix.service }} --region ${{ env.AWS_REGION }} || true
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ github.sha }} \
+                       -t ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:latest \
+                       -f ./${{ matrix.service }}/Dockerfile \
+                       .
+
+      - name: Push to ECR
+        run: |
+          docker push ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:${{ github.sha }}
+          docker push ${{ env.ECR_REGISTRY }}/${{ matrix.service }}:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install recommendation-system ./helm-chart \
+            --namespace recommendation-system \
+            --create-namespace \
+            --values ./helm-chart/values.yaml \
+            --set image.repository=${{ env.ECR_REGISTRY }} \
+            --set image.tag=${{ github.sha }}
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/recommendation-api \
+            -n recommendation-system \
+            --timeout=5m
+
+  smoke-tests:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get LoadBalancer endpoint
+        run: |
+          kubectl wait --for=condition=ready pod \
+            -l app=recommendation-api \
+            -n recommendation-system \
+            --timeout=300s
+
+      - name: Run smoke tests
+        run: |
+          API_ENDPOINT=$(kubectl get svc recommendation-api-service \
+            -n recommendation-system \
+            -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          
+          echo "Testing API health: http://$API_ENDPOINT:8000/health"
+          curl -f http://$API_ENDPOINT:8000/health || exit 1
+          
+          echo "Testing recommendations: http://$API_ENDPOINT:8000/api/v1/recommendations/1"
+          curl -f http://$API_ENDPOINT:8000/api/v1/recommendations/1 || exit 1

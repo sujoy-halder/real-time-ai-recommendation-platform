@@ -1,0 +1,26 @@
+FROM python:3.11-slim as builder
+
+WORKDIR /build
+
+COPY ml-models/requirements.txt .
+
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY --from=builder /root/.local /root/.local
+
+ENV PATH=/root/.local/bin:$PATH
+
+COPY ml-models/ .
+COPY recommendation-engine/ ./recommendation_engine/
+COPY database/ ./database/
+
+RUN useradd -m -u 1000 mltrainer && chown -R mltrainer:mltrainer /app
+
+USER mltrainer
+
+ENTRYPOINT ["python", "training_pipeline.py"]

@@ -1,0 +1,166 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendation-api
+  namespace: recommendation-system
+  labels:
+    app: recommendation-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: recommendation-api
+  template:
+    metadata:
+      labels:
+        app: recommendation-api
+    spec:
+      containers:
+      - name: api
+        image: recommendation-api:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: recommendation-secrets
+              key: database-url
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-service:9092"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendation-api-service
+  namespace: recommendation-system
+spec:
+  selector:
+    app: recommendation-api
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+  type: LoadBalancer
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: recommendation-api-hpa
+  namespace: recommendation-system
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: recommendation-api
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-streaming
+  namespace: recommendation-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-streaming
+  template:
+    metadata:
+      labels:
+        app: spark-streaming
+    spec:
+      containers:
+      - name: spark
+        image: spark-streaming:latest
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-service:9092"
+        resources:
+          requests:
+            cpu: 2000m
+            memory: 2Gi
+          limits:
+            cpu: 4000m
+            memory: 4Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: model-retraining
+  namespace: recommendation-system
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: retrain
+            image: recommendation-engine:latest
+            command:
+            - python
+            - /app/train_models.py
+            env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: recommendation-secrets
+                  key: database-url
+            resources:
+              requests:
+                cpu: 2000m
+                memory: 4Gi
+              limits:
+                cpu: 4000m
+                memory: 8Gi
+          restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: recommendation-pvc
+  namespace: recommendation-system
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
