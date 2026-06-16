@@ -69,72 +69,55 @@ This project showcases practical skills in:
 ---
 
 🏗️ System Architecture
+flowchart TD
+    A[User Interface / Mobile App] --> B[FastAPI API Gateway]
 
-The platform follows a real-time, event-driven, cloud-native architecture designed for scalable personalized recommendations.
+    B --> C[User Service]
+    B --> D[Content Service]
+    B --> E[Search Service]
+    B --> F[Analytics Service]
 
-┌──────────────────────────────────────────────────────────────────────┐
-│                          CLIENT LAYER                                │
-│                                                                      │
-│                  Web App / Mobile App / Frontend                     │
-└───────────────────────────────┬──────────────────────────────────────┘
-                                │
-                                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│                           API LAYER                                  │
-│                                                                      │
-│        FastAPI Gateway  │  User Service  │  Content Service          │
-│        Search Service   │  Analytics Service                         │
-└───────────────────────────────┬──────────────────────────────────────┘
-                                │
-                                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│                      EVENT STREAMING LAYER                           │
-│                                                                      │
-│                 Apache Kafka Event Producer                          │
-│                                                                      │
-│        watch-events  │  like-events  │  rating-events  │ search-events│
-└───────────────────────────────┬──────────────────────────────────────┘
-                                │
-                                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│                    REAL-TIME PROCESSING LAYER                        │
-│                                                                      │
-│                         Apache Spark Streaming                       │
-│                                                                      │
-│        Real-Time Processing  │  Windowed Aggregations                │
-│        Trending Detection    │  User Behavior Analytics              │
-└───────────────────────────────┬──────────────────────────────────────┘
-                                │
-                                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│                    DATA STORAGE & CACHE LAYER                        │
-│                                                                      │
-│     PostgreSQL Database                          Redis Cache          │
-│                                                                      │
-│     users                  recommendations       session cache        │
-│     content                embeddings            recommendation cache │
-│     interactions           analytics             real-time stats      │
-└───────────────────────────────┬──────────────────────────────────────┘
-                                │
-                                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│                      MACHINE LEARNING LAYER                          │
-│                                                                      │
-│                         Airflow Orchestrator                         │
-│                                                                      │
-│       Daily Model Training  │  Data Quality Checks                   │
-│       Collaborative Filtering  │  Content-Based Filtering            │
-│       Neural Recommendation Model  │  Hybrid Recommendation Engine   │
-└───────────────────────────────┬──────────────────────────────────────┘
-                                │
-                                ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│                    SEARCH & OBSERVABILITY LAYER                      │
-│                                                                      │
-│        Elasticsearch  │  Prometheus  │  Grafana  │  ELK Stack         │
-│                                                                      │
-│        Full-text Search  │ Metrics  │ Dashboards  │ Centralized Logs  │
-└──────────────────────────────────────────────────────────────────────┘
+    C --> G[Kafka Event Producer]
+    D --> G
+    E --> G
+    F --> G
+
+    G --> H[Kafka Topics]
+
+    H --> H1[watch-events]
+    H --> H2[like-events]
+    H --> H3[rating-events]
+    H --> H4[search-events]
+
+    H --> I[Spark Streaming Engine]
+
+    I --> J[Real-Time Aggregations]
+    I --> K[Trending Content Detection]
+    I --> L[User Behavior Processing]
+
+    J --> M[PostgreSQL Database]
+    K --> M
+    L --> M
+
+    M --> N[Airflow Orchestrator]
+    N --> O[ML Training Pipeline]
+
+    O --> P[Collaborative Filtering]
+    O --> Q[Content-Based Filtering]
+    O --> R[Neural Recommendation Model]
+
+    P --> S[Hybrid Recommendation Engine]
+    Q --> S
+    R --> S
+
+    S --> T[Redis Cache]
+    T --> B
+
+    M --> U[Elasticsearch]
+    B --> V[Prometheus]
+    V --> W[Grafana Dashboard]
+
+    B --> X[ELK Logging Stack]
 
 ## 🔄 Real-Time Data Flow
 
